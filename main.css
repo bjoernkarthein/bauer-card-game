@@ -1,0 +1,157 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url("background.jpg");
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: cover;
+    background-position-y: center;
+}
+
+h3 {
+    color: white;
+}
+
+#playerInfo {
+    background-color: rgba(0,0,0,0.9);
+    padding-left: 3rem;
+    padding-top: 1rem;
+    width: 100%;
+    height: 5rem;
+    display: flex;
+    position: fixed;
+    bottom: 0;
+}
+
+#points {
+    margin-left: 1rem;
+}
+
+#value {
+    margin-left: .5rem;
+}
+
+#chooseTrumpf {
+    position: fixed;
+    right: 4rem;
+    bottom: 2rem;
+}
+
+.trumpf {
+    width: 3rem;
+    height: 2rem;
+    font-size: x-large;
+    color: white;
+    background: crimson;
+    outline: 0;
+    border: none;
+}
+
+.trumpf:focus {
+    outline: 0;
+}
+
+.hand {
+    display: flex;
+    width: 80rem;
+
+    position: fixed;
+    bottom: 2rem;
+    left: calc(50% - 42rem);
+    pointer-events: none;
+}
+
+.card {
+    width: 13rem;
+    height: 20rem;
+    background-color: white;
+    margin-left: 2rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 -1rem 3rem rgba(0, 0, 0, 0.4);
+    position: relative;
+    padding: 1rem;
+    font-size: x-large;
+    color: black;
+}
+
+.red-card {
+    width: 13rem;
+    height: 20rem;
+    background-color: white;
+    margin-left: 2rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 -1rem 3rem rgba(0, 0, 0, 0.4);
+    position: relative;
+    padding: 1rem;
+    font-size: x-large;
+    color: crimson;
+}
+
+.upside-down {
+    transform: rotate(-180deg);
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+.upside-down-stack {
+    transform: rotate(-180deg);
+    position: absolute;
+    bottom: 0;
+    right: 1rem;
+}
+
+.playButton {
+    width: 105%;
+    position: absolute;
+    bottom: -.1rem;
+    color: white;
+    background: rgb(102, 0, 204);
+    height: 2rem;
+    left: -.5rem;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.stack-empty {
+    width: 13rem;
+    height: 20rem;
+    border-radius: 0.5rem;
+    border-style: dotted;
+    border-width: .5rem;
+    border-color: white;
+    position: fixed;
+    top: 9rem;
+    left: calc(50% - 8rem);
+    overflow: hidden;
+}
+
+.stack-full {
+    width: 12rem;
+    height: 18rem;
+    border-radius: 0.5rem;
+    background: white;
+    position: fixed;
+    top: 9rem;
+    left: calc(50% - 8rem);
+    overflow: hidden;
+    padding: 1rem;
+    font-size: x-large;
+    color: black;
+}
+
+.stack-full-red {
+    width: 12rem;
+    height: 18rem;
+    border-radius: 0.5rem;
+    background: white;
+    position: fixed;
+    top: 9rem;
+    left: calc(50% - 8rem);
+    overflow: hidden;
+    padding: 1rem;
+    font-size: x-large;
+    color: crimson;
+}
