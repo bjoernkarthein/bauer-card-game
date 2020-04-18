@@ -208,7 +208,33 @@ function wait(ms) {
     let d = new Date();
     let d2 = null;
     do { d2 = new Date(); }
-    while(d2-d < ms);
+    while (d2 - d < ms);
+}
+
+function determineTeam(playerId) {
+    if (teamOne.members[0].id == playerId || teamOne.members[1].id == playerId) {
+        return [teamOne.members[0].id, teamOne.members[1].id];
+    }
+
+    if (teamTwo.members[0].id == playerId || teamTwo.members[1].id == playerId) {
+        return [teamTwo.members[0].id, teamTwo.members[1].id];
+    }
+}
+
+function determineAction(action) {
+    let ids = [];
+    switch (action) {
+        case 'stossen':
+            ids = determineTeam((startingPlayer + 1) % currentPlayers);
+            return ids;
+        case 'retour':
+            ids = determineTeam(startingPlayer);
+            return ids;
+        case 'hoch':
+            ids = determineTeam((startingPlayer + 1) % currentPlayers);
+            return ids;
+        default: return -1;
+    }
 }
 
 let io = require('socket.io')(serv, {});
@@ -221,6 +247,12 @@ let pack = [];
 let gameBoard;
 let teamOne = new Team();
 let teamTwo = new Team();
+let stossen;
+let retour;
+let hoch;
+let hochIds;
+let stossenIds;
+let retourIds;
 
 io.sockets.on('connection', function (socket) {
 
@@ -298,11 +330,29 @@ io.sockets.on('connection', function (socket) {
 
     // starts the game
     socket.on('gameStarted', function () {
+
+        if (currentPlayers != 4) {
+            messageAll('dialogueMessage', {
+                duration: 4000,
+                title: "Fehler",
+                text: "Spiel kann nicht gestartet werden, da nicht genügend Spieler vorhanden sind (" + currentPlayers + "/4)."
+            });
+
+            return;
+        }
+
+        stossen = 0;
+        retour = 0;
+        hoch = 0;
+        hochIds = [];
+        stossenIds = [];
+        retourIds = [];
+
         console.log("\n --------------------- \n");
         messageAll('dialogueMessage', {
-            duration: 2000,
+            duration: 3000,
             title: "Spiel Information",
-            text: "Spiel wurde von " + PLAYER_LIST[socket.id].name + " gestartet." 
+            text: "Spiel wurde von " + PLAYER_LIST[socket.id].name + " gestartet."
         });
 
         for (let i in PLAYER_LIST) {
@@ -317,13 +367,9 @@ io.sockets.on('connection', function (socket) {
             let socketC = SOCKET_LIST[i];
             socketC.emit('gameStarted', PLAYER_LIST[socketC.id]);
         }
-        messageAll('blockPlayers', {
-            turn: startingPlayer,
-            name: PLAYER_LIST[startingPlayer].name
-        });
+        
         let socketTrumpf = SOCKET_LIST[startingPlayer];
         socketTrumpf.emit('chooseTrumpf');
-        startingPlayer = (startingPlayer + 1) % currentPlayers;
     });
 
     // handles the choosing of trumpf
@@ -337,6 +383,121 @@ io.sockets.on('connection', function (socket) {
         for (let i in SOCKET_LIST) {
             let socketC = SOCKET_LIST[i];
             socketC.emit('trumpfChosen', PLAYER_LIST[socketC.id]);
+        }
+
+        messageAll('blockPlayers', {
+            turn: -1,
+            name: PLAYER_LIST[startingPlayer].name
+        });
+
+        messageAll('dialogueMessage', {
+            duration: 2000,
+            title: "Spiel Information",
+            text: "Trumpf ist " + suit + "."
+        });
+
+        stossenIds = determineAction('stossen');
+        if (stossenIds == -1) {
+            return;
+        }
+
+        for (let i = 0; i < stossenIds.length; i++) {
+            let socketX = SOCKET_LIST[stossenIds[i]];
+            socketX.emit('stossen');
+        }
+    });
+
+    socket.on('stossen', function (value) {
+        if (value) {
+            for (let i = 0; i < stossenIds.length; i++) {
+                let socketX = SOCKET_LIST[stossenIds[i]];
+                socketX.emit('hide', 'stossen');
+            }
+
+            messageAll('dialogueMessage', {
+                duration: 3000,
+                title: "Spiel Information",
+                text: PLAYER_LIST[socket.id].name + " hat gestoßen."
+            });
+
+            retourIds = determineAction('retour');
+            if (retourIds == -1) {
+                return;
+            }
+
+            for (let i = 0; i < retourIds.length; i++) {
+                let socketX = SOCKET_LIST[retourIds[i]];
+                socketX.emit('retour');
+            }
+        }
+
+        stossen++;
+        if (stossen >= 2) {
+            messageAll('blockPlayers', {
+                turn: startingPlayer,
+                name: PLAYER_LIST[startingPlayer].name
+            });
+        }
+    });
+
+    socket.on('retour', function (value) {
+        if (value) {
+            for (let i = 0; i < retourIds.length; i++) {
+                let socketX = SOCKET_LIST[retourIds[i]];
+                socketX.emit('hide', 'retour');
+            }
+
+            messageAll('dialogueMessage', {
+                duration: 3000,
+                title: "Spiel Information",
+                text: PLAYER_LIST[socket.id].name + " hat retour gegeben."
+            });
+
+            hochIds = determineAction('hoch');
+            if (hochIds == -1) {
+                return;
+            }
+
+            for (let i = 0; i < hochIds.length; i++) {
+                let socketX = SOCKET_LIST[hochIds[i]];
+                socketX.emit('hoch');
+            }
+        }
+
+        retour++;
+        if (retour >= 2) {
+            messageAll('blockPlayers', {
+                turn: startingPlayer,
+                name: PLAYER_LIST[startingPlayer].name
+            });
+        }
+    });
+
+    socket.on('hoch', function (value) {
+        if (value) {
+            for (let i = 0; i < hochIds.length; i++) {
+                let socketX = SOCKET_LIST[hochIds[i]];
+                socketX.emit('hide', 'hoch');
+            }
+
+            messageAll('dialogueMessage', {
+                duration: 3000,
+                title: "Spiel Information",
+                text: PLAYER_LIST[socket.id].name + " hat hoch gesagt."
+            });
+
+            messageAll('blockPlayers', {
+                turn: startingPlayer,
+                name: PLAYER_LIST[startingPlayer].name
+            });
+        }
+
+        hoch++;
+        if (hoch >= 2) {
+            messageAll('blockPlayers', {
+                turn: startingPlayer,
+                name: PLAYER_LIST[startingPlayer].name
+            });
         }
     });
 
@@ -355,7 +516,7 @@ io.sockets.on('connection', function (socket) {
 
             gameBoard.cardsInTheMiddle.push(playedCard);
             messageAll('updateStack', {
-                card: playedCard, 
+                card: playedCard,
                 index: currentPlayers - totalTurns
             });
             gameBoard.checkWhoWins(playedCard);
@@ -368,10 +529,11 @@ io.sockets.on('connection', function (socket) {
             totalTurns--;
             totalCardsPlayed++;
 
-            if (totalCardsPlayed == currentPlayers*5) {
+            if (totalCardsPlayed == currentPlayers * 5) {
                 wait(3000);
                 messageAll('clearStack', null);
                 socket.emit('nextRound');
+                startingPlayer = (startingPlayer + 1) % currentPlayers;
                 return;
             }
 

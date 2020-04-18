@@ -21,8 +21,24 @@
         <input type="button" value='start game' id="startGame" onclick="startGame()">
     </ul>
 
-    <div id="playerInfo">
+    <div id="retour" class="retour invisible">
+        <div id="stossenC" class="invisible">
+            <input class="button" type="button" value='stoßen' id="stoßen" onclick="stossen(true)">
+            <input class="button" type="button" value='nicht stoßen' id="nstoßen" onclick="stossen(false)">
+        </div>
 
+        <div id="retourC" class="invisible">
+            <input class="button" type="button" value='retour' id="retour" onclick="retour(true)">
+            <input class="button" type="button" value='keine retour' id="nretour" onclick="retour(false)">
+        </div>
+
+        <div id="hochC" class="invisible">
+            <input class="button" type="button" value='hoch' id="hoch" onclick="hoch(true)">
+            <input class="button" type="button" value='nicht hoch' id="nhoch" onclick="hoch(false)">
+        </div>
+    </div>
+
+    <div id="playerInfo">
         <h3 id="playerName"></h3>
         <h3 id="points">| Punkte:</h3>
         <h3 id="value">0</h3>
@@ -95,6 +111,24 @@
             socket.emit('gameStarted');
         }
 
+        function stossen(value) {
+            socket.emit('stossen', value);
+            document.getElementById('retour').className = "retour invisible";
+            document.getElementById('stossenC').className = "invisible";
+        }
+
+        function retour(value) {
+            socket.emit('retour', value);
+            document.getElementById('retour').className = "retour invisible";
+            document.getElementById('retourC').className = "invisible";
+        }
+
+        function hoch(value) {
+            socket.emit('hoch', value);
+            document.getElementById('retour').className = "retour invisible";
+            document.getElementById('hochC').className = "invisible";
+        }
+
         socket.on('chooseTrumpf', function () {
             document.getElementById('chooseTrumpf').className = "chooseTrumpf";
         });
@@ -103,6 +137,35 @@
             updateCards(player, 3);
             updateCards(player, 4);
             document.getElementById('chooseTrumpf').className = "chooseTrumpfH";
+        });
+
+        socket.on('stossen', function () {
+            document.getElementById('retour').className = "retour visible";
+            document.getElementById('stossenC').className = "visible";
+        });
+
+        socket.on('retour', function () {
+            document.getElementById('retour').className = "retour visible";
+            document.getElementById('retourC').className = "visible";
+        });
+
+        socket.on('hoch', function () {
+            document.getElementById('retour').className = "retour visible";
+            document.getElementById('hochC').className = "visible";
+        });
+
+        socket.on('hide', function (data) {
+            switch (data) {
+                case 'stossen':
+                    document.getElementById('retour').className = "retour invisible";
+                    document.getElementById('stossenC').className = "invisible";
+                case 'retour':
+                    document.getElementById('retour').className = "retour invisible";
+                    document.getElementById('retourC').className = "invisible";
+                case 'hoch':
+                    document.getElementById('retour').className = "retour invisible";
+                    document.getElementById('hochC').className = "invisible";
+            }
         });
 
         socket.on('playCard', function (data) {
@@ -160,7 +223,7 @@
             document.getElementById('overlay').className = "overlay-active";
             document.getElementById('dialogue').className = "dialogue-active";
 
-            setTimeout(function(){ 
+            setTimeout(function () {
                 document.getElementById('overlay').className = "overlay";
                 document.getElementById('dialogue').className = "dialogue";
             }, duration)

@@ -59,6 +59,35 @@ li {
     margin-top: 1rem;
 }
 
+.retour {
+    position: fixed;
+    right: 2rem;
+    top: 2rem;
+    background: lightgray;
+    width: 8rem;
+    height: 3rem;
+    padding: 1rem;
+    overflow: hidden;
+    z-index: 6;
+}
+
+.retour .button {
+    margin-bottom: 0.5rem;
+    width: 8rem;
+}
+
+.visible {
+    visibility: visible;
+    pointer-events: all;
+    position: absolute;
+}
+
+.invisible {
+    visibility: hidden;
+    pointer-events: all;
+    position: absolute;
+}
+
 #playerInfo {
     background-color: rgba(0,0,0,0.9);
     padding-left: 3rem;
@@ -83,6 +112,7 @@ li {
     right: 4rem;
     bottom: 2rem;
     visibility: hidden;
+    z-index: 6;
 }
 
 .chooseTrumpf {
@@ -90,6 +120,7 @@ li {
     right: 4rem;
     bottom: 2rem;
     visibility: visible;
+    z-index: 6;
 }
 
 .trumpf {
