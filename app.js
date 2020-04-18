@@ -304,6 +304,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     // handling the disconnect of a client
+    // TODO: disconnect and reconnect issues need to be resolved
     socket.on('disconnect', function () {
         let player = PLAYER_LIST[socket.id];
         console.log("\n --------------------- \n");
