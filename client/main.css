@@ -55,6 +55,9 @@ li {
     cursor: pointer;
 }
 
+#startGame {
+    margin-top: 1rem;
+}
 
 #playerInfo {
     background-color: rgba(0,0,0,0.9);
@@ -75,10 +78,18 @@ li {
     margin-left: .5rem;
 }
 
-#chooseTrumpf {
+.chooseTrumpfH {
     position: fixed;
     right: 4rem;
     bottom: 2rem;
+    visibility: hidden;
+}
+
+.chooseTrumpf {
+    position: fixed;
+    right: 4rem;
+    bottom: 2rem;
+    visibility: visible;
 }
 
 .trumpf {
@@ -102,6 +113,35 @@ li {
     position: fixed;
     bottom: 2rem;
     left: calc(50% - 42rem);
+}
+
+.blockActive {
+    position: fixed;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: white;
+    font-size: larger;
+    font-weight: bold;
+    background: rgba(0,0,0,0.5);
+    top: 0;
+    padding-top: 2rem;
+}
+
+.blockInActive {
+    position: fixed;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: white;
+    font-size: larger;
+    font-weight: bold;
+    background: rgba(0,0,0,0.5);
+    top: 0;
+    padding-top: 2rem;
+    visibility: hidden;
     pointer-events: none;
 }
 
@@ -172,6 +212,31 @@ li {
     overflow: hidden;
 }
 
+.stack-emptyS {
+    width: 13rem;
+    height: 20rem;
+    border-radius: 0.5rem;
+    position: fixed;
+    top: 9rem;
+    left: calc(50% - 8rem);
+    overflow: hidden;
+}
+
+#playedCard1 {
+    margin-left: 3rem;
+    z-index: 1;
+}
+
+#playedCard2 {
+    margin-left: 6rem;
+    z-index: 2;
+}
+
+#playedCard3 {
+    margin-left: 9rem;
+    z-index: 3;
+}
+
 .stack-full {
     width: 12rem;
     height: 18rem;
@@ -184,6 +249,8 @@ li {
     padding: 1rem;
     font-size: x-large;
     color: black;
+    box-shadow: 0 -1rem 3rem rgba(0, 0, 0, 0.4);
+    z-index: 0;
 }
 
 .stack-full-red {
@@ -198,4 +265,68 @@ li {
     padding: 1rem;
     font-size: x-large;
     color: crimson;
+}
+
+.dialogue {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -80%) scale(0);
+    background-color: white;
+    z-index: 10;
+    width: 20rem;
+    max-width: 80%;
+    border-radius: 1rem;
+    transition: 300ms ease-in-out;
+}
+
+.dialogue-active {
+    transform: translate(-50%, -80%) scale(1);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    background-color: white;
+    z-index: 10;
+    width: 20rem;
+    max-width: 80%;
+    border-radius: 1rem;
+    transition: 300ms ease-in-out;
+}
+
+#dialogue-header {
+    padding: 1rem;
+    background: lightgray;
+    border-radius: 1rem 1rem 0 0;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+#dialogue-body {
+    padding: 1rem;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: black;
+    opacity: 0;
+    z-index: 9;
+    pointer-events: none;
+    transition: 300ms ease-in-out;
+}
+
+.overlay-active {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: black;
+    z-index: 9;
+    transition: 300ms ease-in-out;
+    opacity: 0.5;
+    pointer-events: all;
 }

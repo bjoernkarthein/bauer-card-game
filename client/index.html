@@ -1,91 +1,227 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
-    <link rel = "stylesheet" type = "text/css" href="client/main.css" />
+    <link rel="stylesheet" type="text/css" href="client/main.css" />
     <title>Bauer</title>
 </head>
 
 <body>
+    <div id="blockPlyer" class="blockInActive">Waiting for your turn...</div>
     <ul id="players">
-        <li id="player0"></li><input id="edit0" class="editNameDisabled" type="button" value="&#10004;" onclick="changeName(0)"/>
-        <li id="player1"></li><input id="edit1" class="editNameDisabled" type="button" value="&#10004;" onclick="changeName(1)"/>
-        <li id="player2"></li><input id="edit2" class="editNameDisabled" type="button" value="&#10004;" onclick="changeName(2)"/>
-        <li id="player3"></li><input id="edit3" class="editNameDisabled" type="button" value="&#10004;" onclick="changeName(3)"/>
+        <li id="player0"></li><input id="edit0" class="editNameDisabled" type="button" value="&#10004;"
+            onclick="changeName(0)" />
+        <li id="player1"></li><input id="edit1" class="editNameDisabled" type="button" value="&#10004;"
+            onclick="changeName(1)" />
+        <li id="player2"></li><input id="edit2" class="editNameDisabled" type="button" value="&#10004;"
+            onclick="changeName(2)" />
+        <li id="player3"></li><input id="edit3" class="editNameDisabled" type="button" value="&#10004;"
+            onclick="changeName(3)" />
+        <input type="button" value='start game' id="startGame" onclick="startGame()">
     </ul>
-    <div id="playerInfo"><h3 id="playerName"></h3> <h3 id="points">| Punkte:</h3> <h3 id="value">0</h3>
-    <div id="chooseTrumpf">
-        <input type="button" value='♦' class ="trumpf" onclick="chooseTrumpf('Karo')"> 
-        <input type="button" value='♥' class ="trumpf" onclick="chooseTrumpf('Herz')">
-        <input type="button" value='♠' class ="trumpf" onclick="chooseTrumpf('Pik')"> 
-        <input type="button" value='♣' class ="trumpf" onclick="chooseTrumpf('Kreuz')"> 
+
+    <div id="playerInfo">
+
+        <h3 id="playerName"></h3>
+        <h3 id="points">| Punkte:</h3>
+        <h3 id="value">0</h3>
+        <div id="chooseTrumpf" class="chooseTrumpfH">
+            <input type="button" value='♦' class="trumpf" onclick="chooseTrumpf('Karo')">
+            <input type="button" value='♥' class="trumpf" onclick="chooseTrumpf('Herz')">
+            <input type="button" value='♠' class="trumpf" onclick="chooseTrumpf('Pik')">
+            <input type="button" value='♣' class="trumpf" onclick="chooseTrumpf('Kreuz')">
+        </div>
     </div>
+
+    <div id="dialogue" class="dialogue">
+        <div id="dialogue-header"></div>
+        <div id="dialogue-body"></div>
     </div>
+    <div id="overlay" class="overlay"></div>
 
     <div class="hand">
-        <div class="card" id="10"><input class="playButton" type="button" value="play" onclick="playCard(10)"></div>
-        <div class="card" id="11"><input class="playButton" type="button" value="play" onclick="playCard(11)"></div>
-        <div class="card" id="12"><input class="playButton" type="button" value="play" onclick="playCard(12)"></div>
-        <div class="card" id="13"><input class="playButton" type="button" value="play" onclick="playCard(13)"></div>
-        <div class="card" id="14"><input class="playButton" type="button" value="play" onclick="playCard(14)"></div>
+        <div class="card" id="0"><input class="playButton" type="button" value="play" onclick="playCard(0)"></div>
+        <div class="card" id="1"><input class="playButton" type="button" value="play" onclick="playCard(1)"></div>
+        <div class="card" id="2"><input class="playButton" type="button" value="play" onclick="playCard(2)"></div>
+        <div class="card" id="3"><input class="playButton" type="button" value="play" onclick="playCard(3)"></div>
+        <div class="card" id="4"><input class="playButton" type="button" value="play" onclick="playCard(4)"></div>
     </div>
 
-    <div class="hand">
-        <div class="card" id="20"><input class="playButton" type="button" value="play" onclick="playCard(20)"></div>
-        <div class="card" id="21"><input class="playButton" type="button" value="play" onclick="playCard(21)"></div>
-        <div class="card" id="22"><input class="playButton" type="button" value="play" onclick="playCard(22)"></div>
-        <div class="card" id="23"><input class="playButton" type="button" value="play" onclick="playCard(23)"></div>
-        <div class="card" id="24"><input class="playButton" type="button" value="play" onclick="playCard(24)"></div>
-    </div>
-
-    <div class="hand">
-        <div class="card" id="30"><input class="playButton" type="button" value="play" onclick="playCard(30)"></div>
-        <div class="card" id="31"><input class="playButton" type="button" value="play" onclick="playCard(31)"></div>
-        <div class="card" id="32"><input class="playButton" type="button" value="play" onclick="playCard(32)"></div>
-        <div class="card" id="33"><input class="playButton" type="button" value="play" onclick="playCard(33)"></div>
-        <div class="card" id="34"><input class="playButton" type="button" value="play" onclick="playCard(34)"></div>
-    </div>
-
-    <div class="hand">
-        <div class="card" id="40"><input class="playButton" type="button" value="play" onclick="playCard(40)"></div>
-        <div class="card" id="41"><input class="playButton" type="button" value="play" onclick="playCard(41)"></div>
-        <div class="card" id="42"><input class="playButton" type="button" value="play" onclick="playCard(42)"></div>
-        <div class="card" id="43"><input class="playButton" type="button" value="play" onclick="playCard(43)"></div>
-        <div class="card" id="44"><input class="playButton" type="button" value="play" onclick="playCard(44)"></div>
-    </div>
-
-    <div class="stack-empty" id="stack"></div>
-    <script src="client/javascript/main.js"></script> 
-
+    <div class="stack-empty" id="playedCard0"></div>
+    <div class="stack-emptyS" id="playedCard1"></div>
+    <div class="stack-emptyS" id="playedCard2"></div>
+    <div class="stack-emptyS" id="playedCard3"></div>
 
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script>
-        var socket = io();
-        socket.on('playerConnected', function(data) {
+        let socket = io();
+        let identifier;
+        socket.on('playerConnected', function (data) {
             for (let i = 0; i < data.length; i++) {
                 document.getElementById("player" + data[i].id).innerHTML = "Player " + data[i].id;
             }
         });
 
-        socket.on('playerConnectedS', function(data) {
+        socket.on('playerConnectedS', function (data) {
             document.getElementById("player" + data.id).contentEditable = "true";
             document.getElementById("edit" + data.id).className = "editName";
+            identifier = data.id;
         });
 
-        socket.on('playerDisconnected', function(data) {
-            console.log(data);
-            document.getElementById("player" + data).innerHTML = "";
-            document.getElementById("edit" + data.id).className = "editNameDisabled";
+        socket.on('playerDisconnected', function (id) {
+            document.getElementById("player" + id).innerHTML = "";
+            document.getElementById("edit" + id).className = "editNameDisabled";
         });
 
-        socket.on('changeName', function(data) {
+        socket.on('changeName', function (data) {
             document.getElementById("player" + data.id).innerHTML = data.name;
+        });
+
+        socket.on('gameStarted', function (data) {
+            document.getElementById('startGame').style = "visibility: hidden;";
+            let player = data;
+            for (let i = 0; i < player.cards.length; i++) {
+                updateCards(player, i);
+            }
         });
 
         function changeName(id) {
             let name = document.getElementById("player" + id).innerHTML;
             socket.emit('changeName', name);
         }
+
+        function startGame() {
+            socket.emit('gameStarted');
+        }
+
+        socket.on('chooseTrumpf', function () {
+            document.getElementById('chooseTrumpf').className = "chooseTrumpf";
+        });
+
+        socket.on('trumpfChosen', function (player) {
+            updateCards(player, 3);
+            updateCards(player, 4);
+            document.getElementById('chooseTrumpf').className = "chooseTrumpfH";
+        });
+
+        socket.on('playCard', function (data) {
+            let player = data.cP;
+            let playedCard = data.pC;
+            let index = data.id;
+            updateCards(player, index);
+        });
+
+        socket.on('updateStack', function (data) {
+            let playedCard = data.card;
+            let index = data.index;
+            document.getElementById("playedCard" + index).className = "stack-full";
+            updateStack(playedCard, index);
+        });
+
+        socket.on('clearStack', function (data) {
+            document.getElementById('playedCard0').innerHTML = "";
+            document.getElementById('playedCard0').className = "stack-empty";
+
+            for (let i = 1; i < 4; i++) {
+                document.getElementById('playedCard' + i).innerHTML = "";
+                document.getElementById('playedCard' + i).className = "stack-emptyS";
+            }
+        });
+
+        socket.on('blockPlayers', function (data) {
+            let id = data.turn;
+            let name = data.name;
+
+            if (id != identifier) {
+                document.getElementById('blockPlyer').className = "blockActive";
+            } else {
+                document.getElementById('blockPlyer').className = "blockInActive";
+            }
+            document.getElementById('playerName').innerHTML = name;
+        });
+
+        socket.on('falseCard', function () {
+            console.log("Cant play that card");
+        });
+
+        socket.on('nextRound', function () {
+            socket.emit('gameStarted');
+        });
+
+        socket.on('dialogueMessage', function (data) {
+            let title = data.title;
+            let text = data.text;
+            let duration = data.duration;
+
+            document.getElementById('dialogue-header').innerHTML = title;
+            document.getElementById('dialogue-body').innerHTML = text;
+
+            document.getElementById('overlay').className = "overlay-active";
+            document.getElementById('dialogue').className = "dialogue-active";
+
+            setTimeout(function(){ 
+                document.getElementById('overlay').className = "overlay";
+                document.getElementById('dialogue').className = "dialogue";
+            }, duration)
+        });
+
+        function updateStack(playedCard, index) {
+            if (playedCard.suit == "Karo" || playedCard.suit == "Herz") {
+                document.getElementById('playedCard' + index).className = "stack-full-red";
+            } else {
+                document.getElementById('playedCard' + index).className = "stack-full";
+            }
+            let suit = determineSymbol(playedCard.suit);
+            document.getElementById('playedCard' + index).innerHTML = playedCard.rank + "<br />" + suit + '<p class="upside-down-stack">' + playedCard.rank + '<br/>' + suit + '</p>';
+        }
+
+        function updateCards(player, index) {
+            if (player.cards[index] == null) {
+                document.getElementById(index).innerHTML = "";
+                return;
+            }
+            let suit = "";
+            let playbutton = document.createElement("INPUT");
+            playbutton.setAttribute("type", "button");
+            playbutton.setAttribute("value", "play");
+            playbutton.setAttribute("class", "playButton");
+            playbutton.setAttribute("onClick", "playCard(" + index + ")");
+
+            if (player.cards[index].suit == "Karo" || player.cards[index].suit == "Herz") {
+                document.getElementById(index.toString()).className = "red-card";
+            } else {
+                document.getElementById(index.toString()).className = "card";
+            }
+            suit = determineSymbol(player.cards[index].suit);
+            document.getElementById(index.toString()).innerHTML = player.cards[index].rank + "<br />" + suit + '<p class="upside-down">' + player.cards[index].rank + '<br/>' + suit + '</p>';
+            document.getElementById(index.toString()).appendChild(playbutton);
+            return;
+        }
+
+        function determineSymbol(suit) {
+            switch (suit) {
+                case "Karo":
+                    return '♦';
+                case "Herz":
+                    return '♥';
+                case "Kreuz":
+                    return '♣';
+                case "Pik":
+                    return '♠';
+                default:
+                    return "Error";
+            }
+        }
+
+        function chooseTrumpf(suit) {
+            socket.emit('chooseTrumpf', suit);
+        }
+
+        function playCard(id) {
+            socket.emit('playCard', id);
+        }
     </script>
 </body>
+
 </html>
