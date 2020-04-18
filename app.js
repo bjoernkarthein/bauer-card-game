@@ -1,13 +1,14 @@
 let express = require('express');
 let app = express();
 let serv = require('http').Server(app);
+let PORT = process.env.PORT || 2000;    //retrieving the PORT for the heroku application
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
 app.use('/client', express.static(__dirname + '/client'));
 
-serv.listen(2000);
+serv.listen(PORT);
 console.log("Server started");
 
 let SOCKET_LIST = {};
