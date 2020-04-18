@@ -222,6 +222,7 @@ function determineTeam(playerId) {
     }
 }
 
+// handles the display of stossen, retour and hoch for the appropriate teams
 function determineAction(action) {
     let ids = [];
     switch (action) {
