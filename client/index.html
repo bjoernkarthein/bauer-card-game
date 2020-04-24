@@ -40,7 +40,7 @@
 
     <div id="playerInfo">
         <h3 id="playerName"></h3>
-        <h3 id="points">| Punkte:</h3>
+        <h3 id="points">| Stiche:</h3>
         <h3 id="value">0</h3>
         <div id="chooseTrumpf" class="chooseTrumpfH">
             <input type="button" value='♦' class="trumpf" onclick="chooseTrumpf('Karo')">
@@ -48,6 +48,7 @@
             <input type="button" value='♠' class="trumpf" onclick="chooseTrumpf('Pik')">
             <input type="button" value='♣' class="trumpf" onclick="chooseTrumpf('Kreuz')">
         </div>
+        <div id="trumpf" class="invisible"></div>
     </div>
 
     <div id="dialogue" class="dialogue">
@@ -100,6 +101,7 @@
             for (let i = 0; i < player.cards.length; i++) {
                 updateCards(player, i);
             }
+            document.getElementById('trumpf').className = "invisible";
         });
 
         function changeName(id) {
@@ -133,10 +135,15 @@
             document.getElementById('chooseTrumpf').className = "chooseTrumpf";
         });
 
-        socket.on('trumpfChosen', function (player) {
+        socket.on('trumpfChosen', function (data) {
+            let player = data.player;
+
             updateCards(player, 3);
             updateCards(player, 4);
             document.getElementById('chooseTrumpf').className = "chooseTrumpfH";
+
+            document.getElementById('trumpf').innerHTML = "Trumpf ist " + data.trumpf + ".";
+            document.getElementById('trumpf').className = "visible";
         });
 
         socket.on('stossen', function () {
@@ -195,6 +202,7 @@
         socket.on('blockPlayers', function (data) {
             let id = data.turn;
             let name = data.name;
+            let points = data.points;
 
             if (id != identifier) {
                 document.getElementById('blockPlyer').className = "blockActive";
@@ -202,10 +210,7 @@
                 document.getElementById('blockPlyer').className = "blockInActive";
             }
             document.getElementById('playerName').innerHTML = name;
-        });
-
-        socket.on('falseCard', function () {
-            console.log("Cant play that card");
+            document.getElementById('value').innerHTML = points;
         });
 
         socket.on('nextRound', function () {

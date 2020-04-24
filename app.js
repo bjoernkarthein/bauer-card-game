@@ -123,6 +123,31 @@ class Board {
             return;
         }
 
+        // Fall für Linker ausgespielt
+        if (this.isLinker(playedCard)) {
+            let tempCopy = playedCard;
+            tempCopy.suit = this.trumpf;
+
+            if (playedCard.rank > this.currentHighestCard.rank) {
+                this.currentHighestCard = tempCopy;
+                this.currentBestPlayer = PLAYER_LIST[this.turn];
+                return;
+            }
+        }
+
+        // Nicht trumpf Farbe ist Bauer niedrig
+        if (playedCard.suit == this.currentHighestCard.suit && playedCard.suit != this.trumpf) {
+            if (playedCard.rank == "B") {
+                playedCard.value = 1.5;
+            }
+
+            if (playedCard.value > this.currentHighestCard.value) {
+                this.currentHighestCard = playedCard;
+                this.currentBestPlayer = PLAYER_LIST[this.turn];
+                return;
+            }
+        }
+
         // Fall für bedienen mit höherem Wert
         if (playedCard.suit == this.currentHighestCard.suit && playedCard.value > this.currentHighestCard.value) {
             this.currentHighestCard = playedCard;
@@ -143,44 +168,58 @@ class Board {
             return true;
         }
 
-        //theoretisch müsste man noch schauen ob man nur einen der Bauern auf der Hand hat der müsste dann gepielt werden
-        if (this.checkForSameSuit(this.firstCardPlayed.suit) && this.firstCardPlayed.suit !== playedCard.suit) {
-            switch (this.trumpf) {
-                case "Herz":
-                    return playedCard.suit == "Karo" && playedCard.rank == "B";
-                case "Karo":
-                    return playedCard.suit == "Herz" && playedCard.rank == "B";
-                case "Pik":
-                    return playedCard.suit == "Kreuz" && playedCard.rank == "B";
-                case "Kreuz":
-                    return playedCard.suit == "Pik" && playedCard.rank == "B";
-                default:
-                    return false;
-            }
+        if (this.firstCardPlayed.suit == this.trumpf && this.isLinker(playedCard)) {
+            return true;
         }
+
+        if (this.checkForSameSuit(this.firstCardPlayed.suit) && this.firstCardPlayed.suit !== playedCard.suit) {
+            return false;
+        }
+
         return true;
     }
 
     checkForSameSuit(suit) {
         let sameSuit = false;
+        let linker = false;
 
         for (let i = 0; i < PLAYER_LIST[this.turn].cards.length; i++) {
             if (PLAYER_LIST[this.turn].cards[i] == null) {
                 continue;
             }
             sameSuit = sameSuit || (PLAYER_LIST[this.turn].cards[i].suit === suit);
+            linker = linker || (this.isLinker(PLAYER_LIST[this.turn].cards[i]));
         }
-        return sameSuit;
+
+        return sameSuit || (suit == this.trumpf && linker);
     }
 
     nextStich() {
         this.turn = parseInt(this.currentBestPlayer.id);
         totalTurns = currentPlayers;
 
+        // giving points
+        PLAYER_LIST[this.turn].score++;
+
         this.cardsInTheMiddle = [];
         this.firstCardPlayed = null;
         this.currentBestPlayer = null;
         this.currentHighestCard = null;
+    }
+
+    isLinker(card) {
+        switch (this.trumpf) {
+            case "Herz":
+                return (card.suit == "Karo" && card.rank == "B");
+            case "Karo":
+                return (card.suit == "Herz" && card.rank == "B");
+            case "Pik":
+                return (card.suit == "Kreuz" && card.rank == "B");
+            case "Kreuz":
+                return (card.suit == "Pik" && card.rank == "B");
+            default:
+                return false;
+        }
     }
 }
 
@@ -255,6 +294,7 @@ let hoch;
 let hochIds;
 let stossenIds;
 let retourIds;
+let rounds = 0;
 
 io.sockets.on('connection', function (socket) {
 
@@ -334,6 +374,7 @@ io.sockets.on('connection', function (socket) {
     // starts the game
     socket.on('gameStarted', function () {
 
+        // Game can only be started with 4 players
         if (currentPlayers != 4) {
             messageAll('dialogueMessage', {
                 duration: 4000,
@@ -351,12 +392,20 @@ io.sockets.on('connection', function (socket) {
         stossenIds = [];
         retourIds = [];
 
-        console.log("\n --------------------- \n");
-        messageAll('dialogueMessage', {
-            duration: 3000,
-            title: "Spiel Information",
-            text: "Spiel wurde von " + PLAYER_LIST[socket.id].name + " gestartet."
-        });
+        if (rounds <= 0) {
+            console.log("\n --------------------- \n");
+            messageAll('dialogueMessage', {
+                duration: 3000,
+                title: "Spiel Information",
+                text: "Spiel wurde von " + PLAYER_LIST[socket.id].name + " gestartet."
+            });
+        } else {
+            messageAll('dialogueMessage', {
+                duration: 3000,
+                title: "Spiel Information",
+                text: "Neue Runde gestartet. " + PLAYER_LIST[startingPlayer].name + " beginnt."
+            });
+        }
 
         for (let i in PLAYER_LIST) {
             let player = PLAYER_LIST[i];
@@ -370,7 +419,15 @@ io.sockets.on('connection', function (socket) {
             let socketC = SOCKET_LIST[i];
             socketC.emit('gameStarted', PLAYER_LIST[socketC.id]);
         }
-        
+
+        messageAll('blockPlayers', {
+            turn: startingPlayer,
+            name: PLAYER_LIST[startingPlayer].name,
+            points: PLAYER_LIST[startingPlayer].score
+        });
+
+        rounds++;
+
         let socketTrumpf = SOCKET_LIST[startingPlayer];
         socketTrumpf.emit('chooseTrumpf');
     });
@@ -385,12 +442,16 @@ io.sockets.on('connection', function (socket) {
         console.log("last 2 cards handed out");
         for (let i in SOCKET_LIST) {
             let socketC = SOCKET_LIST[i];
-            socketC.emit('trumpfChosen', PLAYER_LIST[socketC.id]);
+            socketC.emit('trumpfChosen', {
+                player: PLAYER_LIST[socketC.id],
+                trumpf: suit
+            });
         }
 
         messageAll('blockPlayers', {
             turn: -1,
-            name: PLAYER_LIST[startingPlayer].name
+            name: PLAYER_LIST[startingPlayer].name,
+            points: PLAYER_LIST[startingPlayer].score
         });
 
         messageAll('dialogueMessage', {
@@ -438,7 +499,8 @@ io.sockets.on('connection', function (socket) {
         if (stossen >= 2) {
             messageAll('blockPlayers', {
                 turn: startingPlayer,
-                name: PLAYER_LIST[startingPlayer].name
+                name: PLAYER_LIST[startingPlayer].name,
+                points: PLAYER_LIST[startingPlayer].score
             });
         }
     });
@@ -471,7 +533,8 @@ io.sockets.on('connection', function (socket) {
         if (retour >= 2) {
             messageAll('blockPlayers', {
                 turn: startingPlayer,
-                name: PLAYER_LIST[startingPlayer].name
+                name: PLAYER_LIST[startingPlayer].name,
+                points: PLAYER_LIST[startingPlayer].score
             });
         }
     });
@@ -491,7 +554,8 @@ io.sockets.on('connection', function (socket) {
 
             messageAll('blockPlayers', {
                 turn: startingPlayer,
-                name: PLAYER_LIST[startingPlayer].name
+                name: PLAYER_LIST[startingPlayer].name,
+                points: PLAYER_LIST[startingPlayer].score
             });
         }
 
@@ -499,13 +563,19 @@ io.sockets.on('connection', function (socket) {
         if (hoch >= 2) {
             messageAll('blockPlayers', {
                 turn: startingPlayer,
-                name: PLAYER_LIST[startingPlayer].name
+                name: PLAYER_LIST[startingPlayer].name,
+                points: PLAYER_LIST[startingPlayer].score
             });
         }
     });
 
     socket.on('playCard', function (id) {
         if (gameBoard.trumpf == "") {
+            socket.emit('dialogueMessage', {
+                title: "Spiel Information",
+                text: "Trumpf muss gewählt werden bevor die erste Karte ausgespielt werden kann.",
+                duration: 3000
+            });
             return;
         }
 
@@ -513,8 +583,14 @@ io.sockets.on('connection', function (socket) {
         let playedCard = currentPlayer.cards[id];
 
         if (gameBoard.checkIfPossible(playedCard)) {
+
             if (gameBoard.cardsInTheMiddle[0] == null) {
-                gameBoard.firstCardPlayed = playedCard;
+                if (gameBoard.isLinker(playedCard)) {
+                    let tmpCard = new Card(gameBoard.trumpf, playedCard.rank, playedCard.value);
+                    gameBoard.firstCardPlayed = tmpCard;
+                } else {
+                    gameBoard.firstCardPlayed = playedCard;
+                }
             }
 
             gameBoard.cardsInTheMiddle.push(playedCard);
@@ -549,10 +625,15 @@ io.sockets.on('connection', function (socket) {
             }
             messageAll('blockPlayers', {
                 turn: gameBoard.turn,
-                name: PLAYER_LIST[gameBoard.turn].name
+                name: PLAYER_LIST[gameBoard.turn].name,
+                points: PLAYER_LIST[gameBoard.turn].score
             });
         } else {
-            socket.emit('falseCard');
+            socket.emit('dialogueMessage', {
+                title: "Spiel Information",
+                text: "Diese Karte kann nicht gespielt werden. " + gameBoard.firstCardPlayed.suit + " muss bedient werden.",
+                duration: 3000
+            });
         }
     });
 });
