@@ -570,14 +570,15 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('playCard', function (id) {
-        if (gameBoard.trumpf == "") {
-            socket.emit('dialogueMessage', {
-                title: "Spiel Information",
-                text: "Trumpf muss gewählt werden bevor die erste Karte ausgespielt werden kann.",
-                duration: 3000
-            });
-            return;
-        }
+        
+        // if (gameBoard.trumpf == "") {
+        //     socket.emit('dialogueMessage', {
+        //         title: "Spiel Information",
+        //         text: "Trumpf muss gewählt werden bevor die erste Karte ausgespielt werden kann.",
+        //         duration: 3000
+        //     });
+        //     return;
+        // }
 
         let currentPlayer = PLAYER_LIST[socket.id];
         let playedCard = currentPlayer.cards[id];
