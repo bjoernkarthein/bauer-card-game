@@ -1,12 +1,14 @@
+let functions = require('firebase-functions');
 let express = require('express');
 let app = express();
 let serv = require('http').Server(app);
-let PORT = process.env.PORT || 2000;    //retrieving the PORT for the heroku application
+let PORT = 2000;
 
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/client/index.html');
+    res.sendFile(__dirname + '/public/index.html');
 });
-app.use('/client', express.static(__dirname + '/client'));
+app.use('/public', express.static(__dirname + '/public'));
+exports.app = functions.https.onRequest(app);
 
 serv.listen(PORT);
 console.log("Server started");

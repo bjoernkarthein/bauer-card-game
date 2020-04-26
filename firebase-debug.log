@@ -1,0 +1,25 @@
+[debug] [2020-04-26T12:08:31.790Z] ----------------------------------------------------------------------
+[debug] [2020-04-26T12:08:31.792Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Björn\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2020-04-26T12:08:31.792Z] CLI Version:   8.1.1
+[debug] [2020-04-26T12:08:31.792Z] Platform:      win32
+[debug] [2020-04-26T12:08:31.792Z] Node Version:  v12.16.1
+[debug] [2020-04-26T12:08:31.793Z] Time:          Sun Apr 26 2020 14:08:31 GMT+0200 (GMT+02:00)
+[debug] [2020-04-26T12:08:31.794Z] ----------------------------------------------------------------------
+[debug] [2020-04-26T12:08:31.794Z] 
+[debug] [2020-04-26T12:08:31.799Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-04-26T12:08:31.800Z] > authorizing via signed-in user
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\Björn\Documents\VS Projects\bauer-card-game
+
+Before we get started, keep in mind:
+
+  * You are initializing in an existing Firebase project directory
+
