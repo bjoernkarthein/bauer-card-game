@@ -93,18 +93,24 @@ li {
     padding-left: 3rem;
     padding-top: 1rem;
     width: 100%;
-    height: 5rem;
+    height: 7rem;
     display: flex;
     position: fixed;
     bottom: 0;
 }
 
+#playerName {
+    margin-top: 3rem;
+}
+
 #points {
     margin-left: 1rem;
+    margin-top: 3rem;
 }
 
 #value {
     margin-left: .5rem;
+    margin-top: 3rem;
 }
 
 .chooseTrumpfH {
@@ -149,7 +155,7 @@ li {
     width: 80rem;
 
     position: fixed;
-    bottom: 2rem;
+    bottom: 5rem;
     left: calc(50% - 42rem);
 }
 
@@ -261,7 +267,7 @@ li {
     border-width: .5rem;
     border-color: white;
     position: fixed;
-    top: 9rem;
+    top: 6rem;
     left: calc(50% - 8rem);
     overflow: hidden;
     box-shadow: none !important;
@@ -272,7 +278,7 @@ li {
     height: 20rem;
     border-radius: 0.5rem;
     position: fixed;
-    top: 9rem;
+    top: 6rem;
     left: calc(50% - 8rem);
     overflow: hidden;
     box-shadow: none !important;

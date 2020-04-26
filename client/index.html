@@ -95,6 +95,10 @@
             document.getElementById("player" + data.id).innerHTML = data.name;
         });
 
+        socket.on('changeNameS', function (name) {
+            document.getElementById("playerName").innerHTML = name;
+        });
+
         socket.on('gameStarted', function (data) {
             document.getElementById('startGame').style = "visibility: hidden;";
             let player = data;
@@ -102,6 +106,8 @@
                 updateCards(player, i);
             }
             document.getElementById('trumpf').className = "invisible";
+            document.getElementById('playerName').innerHTML = player.name;
+            document.getElementById('value').innerHTML = player.score;
         });
 
         function changeName(id) {
@@ -190,6 +196,8 @@
         });
 
         socket.on('clearStack', function (data) {
+            let player = data[identifier];
+
             document.getElementById('playedCard0').innerHTML = "";
             document.getElementById('playedCard0').className = "stack-empty";
 
@@ -197,20 +205,18 @@
                 document.getElementById('playedCard' + i).innerHTML = "";
                 document.getElementById('playedCard' + i).className = "stack-emptyS";
             }
+
+            document.getElementById('value').innerHTML = player.score;
         });
 
         socket.on('blockPlayers', function (data) {
             let id = data.turn;
-            let name = data.name;
-            let points = data.points;
 
             if (id != identifier) {
                 document.getElementById('blockPlyer').className = "blockActive";
             } else {
                 document.getElementById('blockPlyer').className = "blockInActive";
             }
-            document.getElementById('playerName').innerHTML = name;
-            document.getElementById('value').innerHTML = points;
         });
 
         socket.on('nextRound', function () {

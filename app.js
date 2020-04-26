@@ -89,7 +89,7 @@ class Board {
         this.cardsInTheMiddle = [];
         this.firstCardPlayed;
         this.round = 0;
-        this.turn = 0;
+        this.turn = startingPlayer;
         this.trumpf = "";
         this.trumpfChosen = false;
         this.currentHighestCard;
@@ -117,7 +117,7 @@ class Board {
     checkWhoWins(playedCard) {
 
         // Fall für erste gespielte Karte
-        if (playedCard == this.firstCardPlayed) {
+        if (gameBoard.cardsInTheMiddle[0] == null) {
             this.currentHighestCard = playedCard;
             this.currentBestPlayer = PLAYER_LIST[this.turn];
             return;
@@ -125,8 +125,7 @@ class Board {
 
         // Fall für Linker ausgespielt
         if (this.isLinker(playedCard)) {
-            let tempCopy = playedCard;
-            tempCopy.suit = this.trumpf;
+            let tempCopy = new Card(this.trumpf, playedCard.rank, playedCard.value - 0.5); // -0.5 because can be beat by real trumpf Bauer
 
             if (playedCard.rank > this.currentHighestCard.rank) {
                 this.currentHighestCard = tempCopy;
@@ -220,6 +219,13 @@ class Board {
             default:
                 return false;
         }
+    }
+
+    nextRound() {
+        wait(3000);
+        messageAll('clearStack', null);
+        startingPlayer = (startingPlayer + 1) % currentPlayers;
+        totalTurns = currentPlayers;
     }
 }
 
@@ -369,6 +375,7 @@ io.sockets.on('connection', function (socket) {
             id: socket.id,
             name: newName
         });
+        socket.emit('changeNameS', newName);
     });
 
     // starts the game
@@ -381,7 +388,6 @@ io.sockets.on('connection', function (socket) {
                 title: "Fehler",
                 text: "Spiel kann nicht gestartet werden, da nicht genügend Spieler vorhanden sind (" + currentPlayers + "/4)."
             });
-
             return;
         }
 
@@ -570,15 +576,15 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('playCard', function (id) {
-        
-        // if (gameBoard.trumpf == "") {
-        //     socket.emit('dialogueMessage', {
-        //         title: "Spiel Information",
-        //         text: "Trumpf muss gewählt werden bevor die erste Karte ausgespielt werden kann.",
-        //         duration: 3000
-        //     });
-        //     return;
-        // }
+
+        if (gameBoard.trumpf == "") {
+            socket.emit('dialogueMessage', {
+                title: "Spiel Information",
+                text: "Trumpf muss gewählt werden bevor die erste Karte ausgespielt werden kann.",
+                duration: 3000
+            });
+            return;
+        }
 
         let currentPlayer = PLAYER_LIST[socket.id];
         let playedCard = currentPlayer.cards[id];
@@ -594,12 +600,13 @@ io.sockets.on('connection', function (socket) {
                 }
             }
 
+            gameBoard.checkWhoWins(playedCard);
             gameBoard.cardsInTheMiddle.push(playedCard);
             messageAll('updateStack', {
                 card: playedCard,
                 index: currentPlayers - totalTurns
             });
-            gameBoard.checkWhoWins(playedCard);
+
             currentPlayer.cards[id] = null;
             socket.emit('playCard', {
                 cP: currentPlayer,
@@ -610,17 +617,15 @@ io.sockets.on('connection', function (socket) {
             totalCardsPlayed++;
 
             if (totalCardsPlayed == currentPlayers * 5) {
-                wait(3000);
-                messageAll('clearStack', null);
+                gameBoard.nextRound();
                 socket.emit('nextRound');
-                startingPlayer = (startingPlayer + 1) % currentPlayers;
                 return;
             }
 
             if (totalTurns == 0) {
                 wait(3000);
                 gameBoard.nextStich();
-                messageAll('clearStack', null);
+                messageAll('clearStack', PLAYER_LIST);
             } else {
                 gameBoard.turn = (gameBoard.turn + 1) % currentPlayers;
             }
