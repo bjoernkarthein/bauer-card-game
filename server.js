@@ -2,6 +2,8 @@ let express = require('express');
 let app = express();
 let serv = require('http').Server(app);
 let PORT = process.env.PORT || 2000;    //retrieving the PORT for the heroku application
+let ngrok = require('ngrok');
+let opn = require('opn');
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/client/index.html');
@@ -10,6 +12,11 @@ app.use('/client', express.static(__dirname + '/client'));
 
 serv.listen(PORT);
 console.log("Server started");
+
+(async function() {
+    let url = await ngrok.connect(PORT);
+    opn(url);
+})();
 
 let SOCKET_LIST = {};
 let PLAYER_LIST = {};
@@ -346,7 +353,7 @@ io.sockets.on('connection', function (socket) {
         id: player.id,
         name: player.name,
         score: player.score,
-        cards: player.cards
+        cards: player.cards,
     });
 
     // handling the disconnect of a client
