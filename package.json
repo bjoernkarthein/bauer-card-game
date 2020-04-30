@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "bin": "bin.js",
   "dependencies": {
     "express": "^4.17.1",
     "ngrok": "^3.2.7",
