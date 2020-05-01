@@ -13,11 +13,6 @@ app.use('/client', express.static(__dirname + '/client'));
 serv.listen(PORT);
 console.log("Server started");
 
-(async function() {
-    let url = await ngrok.connect(PORT);
-    opn(url);
-})();
-
 let SOCKET_LIST = {};
 let PLAYER_LIST = {};
 
