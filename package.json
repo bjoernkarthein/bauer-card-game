@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "ngrok": "^3.2.7",
     "opn": "^6.0.0",
     "socket.io": "^2.4.0"
